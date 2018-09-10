@@ -1,0 +1,38 @@
+.App {
+  flex-grow: 1;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+}
+
+.App-header {
+  color: white;
+}
+nav.navbar-inverse {
+  padding: 15px;
+}
+.App-header a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #DADADA;
+}
+
+.App-header a:hover {
+  text-decoration: none;
+  color: #FFF;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+

@@ -1,0 +1,7 @@
+.basket{
+  word-wrap: break-word;
+  margin: 20px;
+}
+.basket.hide {
+  display: none;
+}
