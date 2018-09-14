@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Col } from 'react-bootstrap'
+import { Col, Modal, Button } from 'react-bootstrap'
 import Product from '../Product/Product'
 import Basket from '../Basket/Basket'
 import './Store.css'
@@ -18,6 +18,7 @@ class Store extends Component {
     this.removeFromBasket = this.removeFromBasket.bind(this)
     this.removeItemIfNoQuantity = this.removeItemIfNoQuantity.bind(this)
     this.putNewBasket = this.putNewBasket.bind(this)
+    this.handleClose = this.handleClose.bind(this)
   }
   componentDidMount () {
     this._mounted = true
@@ -105,8 +106,16 @@ class Store extends Component {
   putNewBasket (userId, newBasket) {
     axios.put('http://localhost:3000/updateBasket', qs.stringify({ userId: userId, basket: newBasket }))
       .then(function (response, err) {
-        debugger
+        console.log(response, err)
+      }).catch((error) => {
+        console.log(error)
+        this.setState({
+          modalShow: true
+        })
       })
+  }
+  handleClose () {
+    this.setState({ modalShow: false })
   }
   render () {
     const productElements = this.state.products.map(product =>
@@ -119,6 +128,17 @@ class Store extends Component {
           <div className='store'>
             {productElements}
           </div>
+          <Modal show={this.state.modalShow} onHide={this.handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Can't add the product to the basket</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>The product might be reserved in other customers' basket</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={this.handleClose}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
         <Col xs={12} md={3}>
           <Basket user={this.props.user} basket={this.state.basket} removeFromBasket={this.removeFromBasket} />
