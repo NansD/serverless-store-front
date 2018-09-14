@@ -76,11 +76,13 @@ class Store extends Component {
       if ((this.state.basket.basketLines[index].quantity < product.stock && operation === 1) ||
             (this.state.basket.basketLines[index].quantity <= product.stock && operation === -1)) {
         // apply the operation (+1 or -1) to the basket quantity
-        // TODO: refactor this
-        this.state.basket.basketLines[index].quantity = this.state.basket.basketLines[index].quantity + operation
+        var basket = this.state.basket
+        basket.basketLines[index].quantity += operation
+        this.setState({
+          basket: basket
+        })
         this.removeItemIfNoQuantity(this.state.basket.basketLines[index], index)
         this.putNewBasket(this.props.user._id, this.state.basket)
-        this.forceUpdate() // re-render the basket
       } else if (operation === 1) {
         window.alert(`There is no more stock available for product ${product.name}`)
       } else if (operation === -1) {
@@ -112,6 +114,7 @@ class Store extends Component {
         this.setState({
           modalShow: true
         })
+        this.getBasket()
       })
   }
   handleClose () {
