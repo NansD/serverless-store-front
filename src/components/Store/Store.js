@@ -111,10 +111,10 @@ class Store extends Component {
         console.log(response, err)
       }).catch((error) => {
         console.log(error)
+        this.getBasket()
         this.setState({
           modalShow: true
         })
-        this.getBasket()
       })
   }
   handleClose () {
