@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Panel, ListGroup } from 'react-bootstrap'
+import { Panel, ListGroup, Button } from 'react-bootstrap'
 import BasketLine from '../BasketLine/BasketLine'
 import('./Basket.css')
 export default class Basket extends Component {
@@ -24,6 +24,7 @@ export default class Basket extends Component {
           <ListGroup>
             {basketLines}
           </ListGroup>
+          <Panel.Footer> <Button onClick={this.props.checkOut}>Check out</Button></Panel.Footer>
         </Panel>
       </div>
     )

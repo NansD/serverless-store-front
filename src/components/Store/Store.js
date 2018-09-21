@@ -13,30 +13,38 @@ class Store extends Component {
     this.state = {
       products: []
     }
+    // give 'this' context to the member functions
+    this.getProducts = this.getProducts.bind(this)
     this.addToBasket = this.addToBasket.bind(this)
     this.updateBasket = this.updateBasket.bind(this)
     this.removeFromBasket = this.removeFromBasket.bind(this)
+    this.checkOut = this.checkOut.bind(this)
     this.removeItemIfNoQuantity = this.removeItemIfNoQuantity.bind(this)
     this.putNewBasket = this.putNewBasket.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.checkOut = this.checkOut.bind(this)
+    this.handleModalCheckOutClose = this.handleModalCheckOutClose.bind(this)
   }
   componentDidMount () {
     this._mounted = true
     if (!this.props.isAuthenticated) {
       this.props.history.push('/login')
     }
-    axios.get('http://localhost:3000/productsList').then(function (response) {
-      const products = response.data.products
-      if (this._mounted) {
-        this.setState({
-          products: this.state.products.concat(products)
-        })
-      }
-    }.bind(this))
+    this.getProducts()
     this.getBasket()
   }
   componentWillUnmount () {
     this._mounted = false
+  }
+  getProducts = function () {
+    axios.get('http://localhost:3000/productsList').then(function (response) {
+      const products = response.data.products
+      if (this._mounted) {
+        this.setState({
+          products: products
+        })
+      }
+    }.bind(this))
   }
   getBasket = function () {
     if (!this.props.user) return null
@@ -120,6 +128,26 @@ class Store extends Component {
   handleClose () {
     this.setState({ modalShow: false })
   }
+  handleModalCheckOutClose () {
+    this.setState({ modalCheckOutShow: false })
+  }
+  checkOut () {
+    axios.post('http://localhost:3000/buy', { basket: this.state.basket })
+      .then(function (response) {
+        if (response) {
+          this.setState({ basket: {
+            id: this.state.basket.id,
+            basketLines: []
+          } }, () => {
+            this.putNewBasket(this.props.user._id, this.state.basket)
+            this.setState({
+              modalCheckOutShow: true
+            })
+            this.getProducts()
+          })
+        }
+      }.bind(this))
+  }
   render () {
     const productElements = this.state.products.map(product =>
       <Product key={product._id} product={product} addToBasket={this.addToBasket} />
@@ -142,9 +170,20 @@ class Store extends Component {
               <Button onClick={this.handleClose}>Close</Button>
             </Modal.Footer>
           </Modal>
+          <Modal show={this.state.modalCheckOutShow} onHide={this.handleModalCheckOutClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Purchase Successfully achieved !</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>Your products will be shipped soon</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={this.handleModalCheckOutClose}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
         <Col xs={12} md={3}>
-          <Basket user={this.props.user} basket={this.state.basket} removeFromBasket={this.removeFromBasket} />
+          <Basket user={this.props.user} basket={this.state.basket} removeFromBasket={this.removeFromBasket} checkOut={this.checkOut} />
         </Col>
       </div>
     )
